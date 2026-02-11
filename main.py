@@ -10,53 +10,72 @@ from tkinter import filedialog
 
 
 
-
+GROQ_API_KEY = "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"
+client = Groq(api_key=GROQ_API_KEY)
 
 SYSTEM_PROMPT = """
-You are an expert ATS and HR professional.
+You are NOT an HR assistant.
 
-ALWAYS respond ONLY in valid JSON with EXACTLY this structure:
+You are a STRICT ATS SCORING ENGINE.
 
-{
-"overall_score": number,
-"match_percentage": number,
-"analysis":{
-    "strengths":[string],
-    "gaps":[string],
-    "keyword_match":{
-        "matched_keywords":[string],
-        "missing_keywords":[string]
-    }
-},
-"skill_recommendations":{
-    "technical_skills":[{
-        "skill":string,
-        "priority":"High|Medium|Low",
-        "reason":string,
-        "how_to_improve":string
-    }],
-    "soft_skills":[{
-        "skill":string,
-        "priority":"High|Medium|Low",
-        "reason":string,
-        "how_to_improve":string
-    }]
-},
-"resume_improvements":{
-    "formatting":[string],
-    "content":[string],
-    "keywords_to_add":[string]
-},
-"ats_compatibility":{
-    "score":number,
-    "issues":[string],
-    "suggestions":[string]
-},
-"summary":string
-}
+You MUST behave like software, NOT like a human reviewer.
 
-Return ONLY JSON.
+-------------------------
+SCORING ALGORITHM
+-------------------------
+
+STEP 1:
+Extract ALL required skills from JD.
+
+STEP 2:
+Extract ALL skills from resume.
+
+STEP 3:
+matched = intersection(resume_skills, jd_skills)
+
+STEP 4:
+match_percentage = round((len(matched) / len(jd_skills)) * 100)
+
+STEP 5:
+Experience Check:
+If JD mentions REQUIRED experience (years / industry / role) AND resume has NO experience section:
+
+Apply AUTOMATIC −25% penalty.
+
+STEP 6:
+overall_score = match_percentage / 10
+
+-------------------------
+MANDATORY RULES
+-------------------------
+
+• If resume has ZERO experience and JD requires experience:
+  match_percentage MUST be BELOW 60.
+
+• If less than 50% skills matched:
+  match_percentage MUST be BELOW 50.
+
+• Do NOT generate polite scores.
+
+• Junior resume vs senior JD MUST score LOW.
+
+• Different resumes MUST produce different scores.
+
+• Never default to 80+.
+
+• Missing experience is MAJOR FAILURE.
+
+-------------------------
+
+Return ONLY JSON using EXACT structure.
+
+No commentary.
+No explanation.
+No prose.
+Only JSON.
 """
+
+
 
 
 
@@ -99,7 +118,7 @@ RESUME:
             {"role":"system","content":SYSTEM_PROMPT},
             {"role":"user","content":prompt}
         ],
-        temperature=0.3,
+        temperature=0.8,
         response_format={"type":"json_object"}
     )
 
