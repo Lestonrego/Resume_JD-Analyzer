@@ -9,7 +9,8 @@ import tkinter as tk
 from tkinter import filedialog
 
 
-
+GROQ_API_KEY = "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"
+client = Groq(api_key=GROQ_API_KEY)
 SYSTEM_PROMPT = """
 You are NOT an HR assistant.
 
