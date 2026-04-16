@@ -14,7 +14,7 @@ from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 # ─────────────────────────────────────────────
 # CONFIG
 # ─────────────────────────────────────────────
-GROQ_API_KEY    = "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"
+GROQ_API_KEY    = ""
 MAX_ITERATIONS  = 3
 MODEL_NAME      = "llama-3.3-70b-versatile"
 TEMPERATURE     = 0   # fully deterministic
@@ -138,8 +138,7 @@ def get_llm():
         model_kwargs={"seed": 42},
     )
 
-# ─────────────────────────────────────────────
-# ANALYZE — fully stateless (no memory = no score drift)
+
 # ─────────────────────────────────────────────
 def analyze(resume_text: str, jd_text: str, llm) -> dict:
     safe = redact_pii(resume_text)
@@ -169,9 +168,9 @@ def score_class(s): return "score-high" if s>=75 else ("score-mid" if s>=50 else
 def score_emoji(s): return "🟢" if s>=75 else ("🟡" if s>=50 else "🔴")
 
 EXP_STYLES = {
-    "Fresher":   ("exp-fresher",   "🌱"),
-    "Junior":    ("exp-junior",    "🔰"),
-    "Mid-Level": ("exp-mid",       "⚡"),
-    "Senior":    ("exp-senior",    "🔥"),
-    "Executive": ("exp-executive", "👑"),
+    "Fresher":   ("exp-fresher"),
+    "Junior":    ("exp-junior"),
+    "Mid-Level": ("exp-mid"),
+    "Senior":    ("exp-senior"),
+    "Executive": ("exp-executive"),
 }
